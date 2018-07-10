@@ -49,7 +49,11 @@
     "padded-blocks": ["error", "never"],
     "lines-between-class-members": "error",
     "no-multiple-empty-lines": ["error", { "max": 1 }],
-    "padding-line-between-statements": "off",
+    "padding-line-between-statements": ["error",
+      { "blankLine": "never", "prev":"*", "next": "*" },
+      { "blankLine": "always", "prev":"directive", "next": "*" },
+      { "blankLine": "always", "prev":"*", "next": "cjs-export" }
+    ],
     "prefer-template": "off",
     "curly": "off",
     "no-plusplus": "off",
