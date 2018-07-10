@@ -205,7 +205,7 @@ declare module 'ccxt' {
         safeInteger: any;
         safeValue: any;
         capitalize: any;
-        json: JSON["stringify"]
+        json: JSON["stringify"];
         sum: any;
         ordered: any;
         aggregate: any;
@@ -223,7 +223,7 @@ declare module 'ccxt' {
         symbols: string[];
         id: string;
         proxy: string;
-        parse8601: typeof Date.parse
+        parse8601: typeof Date.parse;
         milliseconds: typeof Date.now;
         rateLimit: number;  // milliseconds = seconds * 1000
         timeout: number; // milliseconds
@@ -288,6 +288,24 @@ declare module 'ccxt' {
         seconds (): number;
         microseconds (): number;
     }
+
+    export interface StandardRelayerConfig {
+        providerURL: string;
+        isTest: boolean
+    }
+
+    export class StandardRelayer extends Exchange {
+        static provider (config: StandardRelayerConfig): any;
+    }
+
+    export interface Keys {
+        StandardRelayer?: {
+            ethereumNodeAddress: string;
+        },
+        [exchangeName: string]: string
+    }
+
+    export function loadKeys (keys: Keys): void;
 
     /* tslint:disable */
 

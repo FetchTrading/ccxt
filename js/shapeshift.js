@@ -11,7 +11,7 @@ module.exports = class shapeshift extends Exchange {
             'countries': 'CHE',
             'version': undefined,
             'userAgent': undefined,
-            'rateLimit': 2000,
+            'rateLimit': 1000,
             'urls': {
                 'logo': 'https://shapeshift.io/logo.png',
                 'api': 'https://shapeshift.io',
@@ -29,8 +29,9 @@ module.exports = class shapeshift extends Exchange {
                 'fetchCurrencies': true,
                 'fetchL2OrderBook': false,
                 'fetchMarkets': true,
+                'fetchOHLCV': false,
                 'fetchTicker': true,
-                'fetchTrades': true,
+                'fetchTrades': false,
                 'privateAPI': false,
                 'startInstantTransaction': true,
             },
@@ -112,8 +113,11 @@ module.exports = class shapeshift extends Exchange {
             this.publicGetMarketinfoPair ({ 'pair': bidSymbol }),
             this.publicGetMarketinfoPair ({ 'pair': askSymbol }),
         ]);
+        const now = new Date ();
         return {
-            'timestamp': new Date ().getTime (),
+            'timestamp': now.getTime (),
+            'datetime': now.toISOString (),
+            'nonce': undefined,
             'bids': [
                 [bidResponse.rate, bidResponse.limit],
             ],

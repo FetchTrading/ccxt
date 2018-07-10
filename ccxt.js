@@ -30,16 +30,18 @@ SOFTWARE.
 
 //-----------------------------------------------------------------------------
 
-const Exchange  = require ('./js/base/Exchange')
-    , functions = require ('./js/base/functions')
-    , errors    = require ('./js/base/errors')
+const Exchange        = require ('./js/base/Exchange')
+    , functions       = require ('./js/base/functions')
+    , errors          = require ('./js/base/errors')
+    , StandardRelayer = require ('./js/base/StandardRelayer')
+    , TokenInfo       = require ('./js/base/TokenInfo');
 
 //-----------------------------------------------------------------------------
 // this is updated by vss.js when building
 
-const version = '1.14.172'
+const version = '1.14.172';
 
-Exchange.ccxtVersion = version
+Exchange.ccxtVersion = version;
 
 //-----------------------------------------------------------------------------
 
@@ -100,7 +102,9 @@ const exchanges = {
     'cointiger':               require ('./js/cointiger.js'),
     'coolcoin':                require ('./js/coolcoin.js'),
     'cryptopia':               require ('./js/cryptopia.js'),
+    'ddex':                    require ('./js/ddex.js'),
     'dsx':                     require ('./js/dsx.js'),
+    'ercdex':                  require ('./js/ercdex.js'),
     'ethfinex':                require ('./js/ethfinex.js'),
     'exmo':                    require ('./js/exmo.js'),
     'exx':                     require ('./js/exx.js'),
@@ -140,12 +144,15 @@ const exchanges = {
     'okcoincny':               require ('./js/okcoincny.js'),
     'okcoinusd':               require ('./js/okcoinusd.js'),
     'okex':                    require ('./js/okex.js'),
+    'openrelay':               require ('./js/openrelay.js'),
     'paymium':                 require ('./js/paymium.js'),
     'poloniex':                require ('./js/poloniex.js'),
     'qryptos':                 require ('./js/qryptos.js'),
     'quadrigacx':              require ('./js/quadrigacx.js'),
     'quoinex':                 require ('./js/quoinex.js'),
+    'radarrelay':              require ('./js/radarrelay.js'),
     'shapeshift':              require ('./js/shapeshift.js'),
+    'sharkrelay':              require ('./js/sharkrelay.js'),
     'southxchange':            require ('./js/southxchange.js'),
     'surbitcoin':              require ('./js/surbitcoin.js'),
     'therock':                 require ('./js/therock.js'),
@@ -161,10 +168,32 @@ const exchanges = {
     'yunbi':                   require ('./js/yunbi.js'),
     'zaif':                    require ('./js/zaif.js'),
     'zb':                      require ('./js/zb.js'),    
-}
+};
 
 //-----------------------------------------------------------------------------
 
-module.exports = Object.assign ({ version, Exchange, exchanges: Object.keys (exchanges) }, exchanges, functions, errors)
+function loadKeys (keys) {
+    if (keys.StandardRelayer) {
+        this.StandardRelayer.ethereumNodeAddress = keys.StandardRelayer.ethereumNodeAddress;
+    }
+}
+
+const merged = Object.assign (
+    {
+        version,
+        Exchange,
+        exchanges: Object.keys (exchanges),
+        StandardRelayer,
+        TokenInfo
+    },
+    exchanges,
+    functions,
+    errors,
+    {
+        loadKeys
+    }
+);
+
+module.exports = merged;
 
 //-----------------------------------------------------------------------------
