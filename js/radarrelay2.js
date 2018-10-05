@@ -2,6 +2,9 @@
 
 const { flatten } = require('lodash');
 const { assetDataUtils } = require('0x.js');
+const { BigNumber } = require('@0xproject/utils');
+const { rateUtils, orderParsingUtils } = require('@0xproject/order-utils');
+
 const Exchange = require('./base/Exchange');
 const TokenInfo = require('./base/TokenInfo');
 
@@ -39,6 +42,7 @@ module.exports = class radarrelay2 extends Exchange {
                 'public': {
                     'get': [
                         'asset_pairs',
+                        'orderbook',
                     ],
                 },
             },
@@ -51,6 +55,12 @@ module.exports = class radarrelay2 extends Exchange {
         return TokenInfo.getFromAddress(tokenAddress);
     }
 
+    static encodeTokenInfo(tokenSymbol) {
+        const info = TokenInfo.getFromSymbol(tokenSymbol);
+        if (!info) return null;
+        return assetDataUtils.encodeERC20AssetData(info.address);
+    }
+
     sign(path, api = 'public', method = 'GET', params = {}, headers = undefined, body = undefined) {
         const route = this.url(path, params);
         const url = this.urls['api'] + '/' + route;
@@ -59,6 +69,49 @@ module.exports = class radarrelay2 extends Exchange {
             'method': method,
             'body': body,
             'headers': headers,
+        };
+    }
+
+    async fetchOrderBook(symbol, limit = undefined, params = {}) {
+        const [baseSymbol, quoteSymbol] = symbol.split('/');
+        const encodedBase = radarrelay2.encodeTokenInfo(baseSymbol);
+        const encodedQuote = radarrelay2.encodeTokenInfo(quoteSymbol);
+        const response = await this.publicGetOrderbook({
+            'baseAssetData': encodedBase,
+            'quoteAssetData': encodedQuote,
+        });
+        // we're not going to do pagination here...
+        const one = new BigNumber(1);
+        const { bids, asks } = response;
+        const formattedBids = bids.records.map((record) => {
+            // selling ZRX
+            // taker (user) is ZRX, maker is WETH
+            const order = orderParsingUtils.convertOrderStringFieldsToBigNumber(record.order);
+            const rate = rateUtils.getFeeAdjustedRateOfFeeOrder(order);
+
+            const makerPrecision = this.markets[symbol].info.quoteInfo.precision;
+            const factor = new BigNumber('10').pow(makerPrecision);
+            const makerUnit = order.makerAssetAmount.div(factor);
+
+            return [one.div(rate).toNumber(), makerUnit.toNumber(), order];
+        });
+        const formattedAsks = asks.records.map((record) => {
+            const order = orderParsingUtils.convertOrderStringFieldsToBigNumber(record.order);
+            const rate = rateUtils.getFeeAdjustedRateOfFeeOrder(order);
+
+            const makerPrecision = this.markets[symbol].info.baseInfo.precision;
+            const factor = new BigNumber('10').pow(makerPrecision);
+            const makerUnit = order.makerAssetAmount.div(factor);
+
+            return [rate.toNumber(), makerUnit.toNumber(), order];
+        });
+        const now = new Date();
+        return {
+            'timestamp': now.getTime(),
+            'datetime': now.toISOString(),
+            'nonce': undefined,
+            'bids': formattedBids,
+            'asks': formattedAsks,
         };
     }
 
