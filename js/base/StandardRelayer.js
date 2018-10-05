@@ -1,8 +1,6 @@
 'use strict';
 
-// const Web3 = require ('web3');
-// const { ZeroEx } = require ('0x.js');
-const { toUnitAmount } = require('0x.js').ZeroEx;
+const { toUnitAmount } = require('0x.js');
 const { HttpClient } = require('@0xproject/connect');
 const { BigNumber } = require('@0xproject/utils');
 

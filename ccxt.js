@@ -153,6 +153,7 @@ const exchanges = {
     'quadrigacx':              require ('./js/quadrigacx.js'),
     'quoinex':                 require ('./js/quoinex.js'),
     'radarrelay':              require ('./js/radarrelay.js'),
+    'radarrelay2':             require ('./js/radarrelay2.js'),
     'shapeshift':              require ('./js/shapeshift.js'),
     'sharkrelay':              require ('./js/sharkrelay.js'),
     'southxchange':            require ('./js/southxchange.js'),
