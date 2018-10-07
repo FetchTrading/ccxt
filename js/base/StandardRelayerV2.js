@@ -53,7 +53,7 @@ module.exports = class StandardRelayerV2 extends Exchange {
                 'fetchTicker': false,
                 'fetchTrades': false,
                 'is0xProtocol': true,
-                'needsEthereumNodeEndpoint': true,
+                'needsEthereumNodeEndpoint': false,
                 'privateAPI': false,
             },
             'perPage': 500,
