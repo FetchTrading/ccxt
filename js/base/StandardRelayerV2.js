@@ -3,7 +3,7 @@
 const { flatten } = require('lodash');
 const { assetDataUtils } = require('0x.js');
 const { HttpClient } = require('@0xproject/connect');
-const { rateUtils, orderParsingUtils } = require('@0xproject/order-utils');
+const { orderParsingUtils } = require('@0xproject/order-utils');
 const { BigNumber } = require('@0xproject/utils');
 const { Web3Wrapper } = require('@0xproject/web3-wrapper');
 
@@ -76,7 +76,7 @@ module.exports = class StandardRelayerV2 extends Exchange {
             promises.push(this.sraClient().getOrderbookAsync({ baseAssetData, quoteAssetData }));
         }
         const responses = await Promise.all(promises);
-        responses.push(firstResponse);
+        responses.unshift(firstResponse); // orderbook is pre-sorted
         const bids = responses.reduce(((acc, current) => acc.concat(current.bids.records)), []);
         const asks = responses.reduce(((acc, current) => acc.concat(current.asks.records)), []);
         return { bids, asks }
@@ -168,5 +168,4 @@ module.exports = class StandardRelayerV2 extends Exchange {
         }
         return markets;
     }
-
 };
