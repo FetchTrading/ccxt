@@ -38,6 +38,8 @@ module.exports = class ercdex extends Exchange {
                 fetchTicker: false,
                 fetchTrades: false,
                 privateAPI: false,
+                is0xProtocol: true,
+                ethIsWeth: true,
             },
             api: {
                 public: {
