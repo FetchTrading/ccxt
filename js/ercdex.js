@@ -1,6 +1,7 @@
 'use strict';
 
 const { flatten } = require('lodash');
+const { orderParsingUtils } = require('@0xproject/order-utils');
 const { BigNumber } = require('@0xproject/utils');
 const { Web3Wrapper } = require('@0xproject/web3-wrapper');
 
@@ -94,7 +95,7 @@ module.exports = class ercdex extends Exchange {
         const quoteInfo = TokenInfo.getFromSymbol(quoteSymbol);
 
         const formattedBids = bids.map((record) => {
-            const { order } = record;
+            const order = orderParsingUtils.convertOrderStringFieldsToBigNumber(record.order);
             const makerAmount = new BigNumber(order.makerAssetAmount);
             const takerAmount = new BigNumber(order.takerAssetAmount);
             const makerUnit = Web3Wrapper.toUnitAmount(makerAmount, quoteInfo.decimals);
@@ -103,7 +104,7 @@ module.exports = class ercdex extends Exchange {
             return [rate.toNumber(), takerUnit.toNumber(), order];
         });
         const formattedAsks = asks.map((record) => {
-            const { order } = record;
+            const order = orderParsingUtils.convertOrderStringFieldsToBigNumber(record.order);
             const makerAmount = new BigNumber(order.makerAssetAmount);
             const takerAmount = new BigNumber(order.takerAssetAmount);
             const makerUnit = Web3Wrapper.toUnitAmount(makerAmount, baseInfo.decimals);
