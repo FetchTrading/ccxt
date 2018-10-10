@@ -41,6 +41,7 @@ module.exports = class ercdex extends Exchange {
                 privateAPI: false,
                 is0xProtocol: true,
                 ethIsWeth: true,
+                daiQuoteOnly: true,
             },
             api: {
                 public: {
